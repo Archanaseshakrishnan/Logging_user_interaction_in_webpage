@@ -4,6 +4,9 @@ include 'sql.php';
 $query = "SELECT `pagevisits`, `username` FROM `login_users`";
 $result = mysql_query($query);
 echo mysql_num_rows($result);
+$q = "SELECT COUNT(*) AS 'count',`event` FROM `user_activity` WHERE `username` = 'archana' GROUP BY `event`";
+$r = mysql_query($q);
+echo mysql_num_rows($r);
 ?>
 <!DOCTYPE html>
 <html>
@@ -12,7 +15,14 @@ echo mysql_num_rows($result);
 	
 </head>
 <body>
-	<div id="piechart" style="width: 900px; height:500px;"></div>
+	<table>
+	<tr>
+	<td id="piechart" style="width: 900px; height:500px;"></td>
+	<td id="barchar" style="width: 900px; height:500px;">
+	
+	</td>
+	</tr>
+	</table>
 	<script type="text/javascript">
 	google.charts.load('current',{'packages':['corechart']})
 	google.charts.setOnLoadCallback(drawChart);
@@ -33,5 +43,26 @@ echo mysql_num_rows($result);
 		chart.draw(data,options);
 	}
 	</script>
+	
+  <script type="text/javascript">
+    google.charts.load("current", {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart2);
+    function drawChart2() {
+      var data = google.visualization.arrayToDataTable([
+        ['event','count'],
+		<?php
+		while($ro = mysql_fetch_array($r)){
+		echo "['".$ro["event"]."',".$ro["count"]."],";
+		}
+		?>
+      ]);
+
+      var options = {
+        title: "User data",
+        };
+      var chart = new google.visualization.ColumnChart(document.getElementById("barchar"));
+      chart.draw(data, options);
+  }
+  </script>
 </body>
 </html>

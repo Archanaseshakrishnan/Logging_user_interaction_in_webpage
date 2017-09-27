@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<table>
+	<tr>
+	<td id="piechart" style="width: 700px; height:300px;"></td>
+	<td id="barchar" style="width: 900px; height:500px;">
+	
+	</td>
+	</tr>
+	</table>
+<script type="text/javascript">
+google.charts.load('current',{'packages':['corechart']});
+window.setInterval(drawChart, 1000);
+
+function drawChart(){
+	var jsonData = $.ajax({
+		url: "getData.php",
+		dataType: "json",
+		async: false
+	}).responseText;
+	
+	var chartdata=[];
+	jsonData = JSON.parse(jsonData);
+	//document.getElementById("pie").innerHTML=jsonData.length;
+	var options = {
+            title: 'Interested Users',
+            width: 500,
+            height: 300
+        };
+		var data=new google.visualization.DataTable();
+		 data.addColumn('string', 'username');
+            data.addColumn('number', 'pagevisits');
+			for (var i = 0; i < jsonData.length; i++) {
+                data.addRow([jsonData[i].username, jsonData[i].pagevisits]);
+            }
+	var chart = new google.visualization.ScatterChart(document.getElementById("piechart"));
+	chart.draw(data,options);
+}
+</script>
+<script type="text/javascript">
+google.charts.load('current',{'packages':['corechart']});
+window.setInterval(drawChart2, 1000);
+
+function drawChart2(){
+	var jsonData1 = $.ajax({
+		url: "getEventData.php",
+		dataType: "json",
+		async: false
+	}).responseText;
+	
+	jsonData1 = JSON.parse(jsonData1);
+	//document.getElementById("pie").innerHTML=jsonData.length;
+	var options = {
+            title: 'LoggedIn User\'s Activity',
+            width: 900,
+            height: 500
+        };
+		var data1=new google.visualization.DataTable();
+		 data1.addColumn('string', 'event');
+            data1.addColumn('number', 'count');
+			for (var i = 0; i < jsonData1.length; i++) {
+                data1.addRow([jsonData1[i].event, jsonData1[i].count]);
+            }
+	var chart = new google.visualization.PieChart(document.getElementById("barchar"));
+	chart.draw(data1,options);
+}
+</script>
+
+</body>
+</html>
